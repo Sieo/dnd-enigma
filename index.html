@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Énigme - Isolé</title>
+  <style>
+    .container {
+  font-family: 'Segoe UI', sans-serif;
+  color: #eee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: lightgrey;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.word {
+  display: flex;
+  gap: 10px;
+  margin: 10px;
+}
+
+.letter {
+  padding: 15px 20px;
+  border: 2px solid #666;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 3.5em;
+  transition: background-color 0.3s;
+}
+
+.letter.locked {
+  pointer-events: none;
+}
+
+.embossed-text {
+  color: #fff;
+  text-shadow: 2px 4px 2px #555;
+  -webkit-background-clip: text;
+}
+
+.engraved-text {
+    background-color: #666666;
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 3px 5px 1px rgba(245,245,245,0.5);
+}
+
+#message {
+  margin-top: 20px;
+  font-size: 1.2em;
+  color: #ffd700;
+}
+</style>
+</head>
+<body>
+  <div class="container">
+  <div class="word" data-word="DOLINDAR"></div>
+  <div class="word" data-word="retiré"></div>
+  <div class="word" data-word="au-delà"></div>
+  <div class="word" data-word="des"></div>
+  <div class="word" data-word="mondes"></div>
+
+  <div id="message"></div>
+  </div>
+<script>
+  const solution = [
+      { word: 'DOLINDAR', letter: 'I' },
+      { word: 'des', letter: 'S' },
+      { word: 'mondes', letter: 'O' },
+      { word: 'au-delà', letter: 'L' },
+      { word: 'retiré', letter: 'É' },
+    ];
+
+    let currentStep = 0;
+
+    const words = document.querySelectorAll('.word');
+    words.forEach(wordDiv => {
+      const word = wordDiv.getAttribute('data-word');
+      word.split('').forEach(letter => {
+        const btn = document.createElement('button');
+        btn.textContent = letter.toUpperCase();
+        btn.classList.add('letter');
+        btn.classList.add('embossed-text');
+        btn.addEventListener('click', () => handleClick(word, letter.toUpperCase(), btn, wordDiv));
+        wordDiv.appendChild(btn);
+      });
+    });
+
+    function handleClick(word, letter, btn, wordDiv) {
+      const expected = solution[currentStep];
+      currentStep++;
+      wordDiv.querySelectorAll('.letter').forEach(b => {
+          b.classList.add('locked');
+          b.classList.remove('embossed-text');
+          b.classList.add('engraved-text');
+        });
+      if (word === expected.word && letter === expected.letter) {
+        if (currentStep === solution.length) {
+          document.getElementById('message').textContent = '✅ Mot trouvé : ISOLÉ';
+        }
+      } else {
+        if(currentStep !== 1) {
+          reset();
+        }
+      }
+    }
+
+    function reset() {
+      currentStep = 0;
+      document.querySelectorAll('.letter').forEach(btn => {
+        btn.classList.remove('locked', 'error', 'engraved-text');
+        btn.classList.add('embossed-text');
+      });
+    }
+const btnReset = document.getElementById('reset');
+btnReset.addEventListener('click', () => {
+  reset();
+  document.getElementById('message').textContent = '';
+});
+</script>
+</body>
+</html>
